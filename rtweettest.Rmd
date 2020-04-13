@@ -1,0 +1,50 @@
+---
+title: "rtweet test"
+author: "Nick Havey"
+date: "1/7/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#install.packages('rtweet')
+library(rtweet)
+library(igraph)
+## search for #rstats or other keyword tweets
+camcons <- search_tweets("UCLA", n = 20)
+## create from-to data frame representing retweet/mention/reply connections
+camcons_net <- network_data(camcons, c("mention,retweet,reply,quote"))
+## view edge data frame
+camcons_net
+## view user_id->screen_name index
+attr(camcons_net, "idsn")
+## if igraph is installed...
+if (requireNamespace("igraph", quietly = TRUE)) {
+## (1) convert directly to graph object representing semantic network
+camcons_net <- network_graph(camcons)
+## (2) plot graph via igraph.plotting
+plot(camcons_net)
+}
+## End(Not run)
+```
+
+```{r}
+## get friends of multiple accounts
+fds <- get_friends(c("nihavey", "ozanjaquette", "pmartin10_"))
+## frequency count of accounts followed by the users queried above
+tbl <- table(fds$user_id)
+## subset fds data to only those followed by 3 or more
+fds3 <- subset(fds, user_id %in% names(tbl[tbl > 2L]))
+## convert fds3 to matrix
+mat <- as.matrix(fds3)
+## convert to graph object
+mat <- igraph::graph_from_edgelist(mat)
+## plot network
+plot(mat)
+```
+
+lookup_users(163670960)
+lookup_users(1087504215205761024)

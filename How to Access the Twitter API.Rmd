@@ -1,0 +1,51 @@
+---
+title: "How to access the Twitter API"
+author: "Nick Havey"
+date: "4/5/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# First, start at this website: https://developer.twitter.com/en/docs/basics/getting-started 
+# It is the official Twitter website with information about developing apps on Twitter (what we will be doing for class)
+
+# Your first move after reading through the content of that website is to apply for a developer account. This requires that you already have a Twitter account. If you don't, go to twitter.com and sign up. Ozan, Patricia, Crystal, and I (Nick) are all on Twitter and you can follow us! You can also follow Ben Skinner, Will Doyle, and a ton of people who can help you with R. #rstats 
+
+# You apply foe an account here: https://developer.twitter.com/en/docs/basics/developer-portal/overview
+
+# After you have been granted a developer account, you'll need to update your settings to allow your developer app access to EVERYTHING, generate keys (this will be clear on the dashboard once you have the account / should be covered in the above links) and authenticate your access in order to actually do anything (basically proxy R as your Twitter). 
+
+```{r}
+#These are the libraries I use for my Twitter analyses. I've commented out the ones you DO NOT need to install to access the Twitter API. # You should realistically download twitteR, streamR, and rtweet if you want to do anything with R/Twitter. Also Tidyverse. 
+# library(tweetscores)
+# library(twitteR)
+# library(streamR)
+library(ROAuth)
+library(RCurl)
+# library(rtweet)
+# library(igraph)
+# library(tidyverse)
+```
+
+```{r} 
+# You need to do all these things, but the websites will be the exact same for all of you. The important thing is to PUT IN THE KEYS GENERATED ON YOUR DEVELOPER PAGE. I have removed my keys, but they are alphanumeric codes. 
+requestURL <- "https://api.twitter.com/oauth/request_token"
+accessURL <- "https://api.twitter.com/oauth/access_token"
+authURL <- "https://api.twitter.com/oauth/authorize"
+consumerKey <- "x"
+consumerSecret <- "y"
+my_oauth <- OAuthFactory$new(consumerKey=consumerKey, consumerSecret=consumerSecret, 
+    requestURL=requestURL, accessURL=accessURL, authURL=authURL)
+
+# After you create your authentication code, you need to "handshake" with the server and actually connect. This should open a Twitter window and ask you to copy and past a code into the R console. If this just opens your Twitter developer page, look at the address for your browser, the code you need to copy and paste is at the end of the address (ex: https://api.twitter.com/oauth/authorize/thecodeyouneedtopaste)
+
+my_oauth$handshake(cainfo = system.file("CurlSSL", "cacert.pem", package = "RCurl"))
+
+# If you successfully do this, you should just be able to save the oauth as my_oauth and load it when you want to login. Personally, I just handshake whenever I login because it's not that hard. 
+
+save(my_oauth, file="my_oauth")
+```
+
